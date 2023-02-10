@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Model_BD_Electronicos_SA.Store" Provider="Oracle.ManagedDataAccess.Client" ProviderManifestToken="18.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="CATEGORIA">
+    <Key>
+      <PropertyRef Name="ID_CATEGORIA" />
+    </Key>
+    <Property Name="ID_CATEGORIA" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="NOMBRE_CATEGORIA" Type="varchar2" MaxLength="20" Nullable="false" />
+    <Property Name="FECHA_CREACION" Type="timestamp" Precision="6" />
+    <Property Name="FECHA_MODIFICACION" Type="timestamp" Precision="6" />
+  </EntityType>
+  <EntityType Name="CLIENTE">
+    <Key>
+      <PropertyRef Name="ID_CLIENTE" />
+    </Key>
+    <Property Name="ID_CLIENTE" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="ID_ESTADO_FK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="NIT_CLIENTE" Type="varchar2" MaxLength="30" Nullable="false" />
+    <Property Name="NOMBRE_CLIENTE" Type="varchar2" MaxLength="30" Nullable="false" />
+    <Property Name="APELLIDO_CLIENTE" Type="varchar2" MaxLength="30" Nullable="false" />
+    <Property Name="SEXO_CLIENTE" Type="varchar2" MaxLength="10" />
+    <Property Name="TELEFONO_CLIENTE" Type="varchar2" MaxLength="15" />
+    <Property Name="DIRECCION_CLIENTE" Type="varchar2" MaxLength="50" Nullable="false" />
+    <Property Name="CORREO_CLIENTE" Type="varchar2" MaxLength="50" Nullable="false" />
+    <Property Name="PASSWORD_CLIENTE" Type="varchar2" MaxLength="100" Nullable="false" />
+    <Property Name="FECHA_CREACION" Type="timestamp" Precision="6" />
+    <Property Name="FECHA_MODIFICACION" Type="timestamp" Precision="6" />
+  </EntityType>
+  <EntityType Name="DETALLE_FACTURA">
+    <Key>
+      <PropertyRef Name="ID_DETALLE_FACTURA" />
+    </Key>
+    <Property Name="ID_DETALLE_FACTURA" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="ID_FACTURA_FK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="ID_PRODUCTO_FK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="CANTIDAD_COMPRA" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="PRECIO_PRODUCTO" Type="float" Precision="126" Scale="0" Nullable="false" />
+    <Property Name="TOTAL_COMPRA" Type="float" Precision="126" Scale="0" Nullable="false" />
+    <Property Name="FECHA_CREACION" Type="timestamp" Precision="6" />
+    <Property Name="FECHA_MODIFICACION" Type="timestamp" Precision="6" />
+  </EntityType>
+  <EntityType Name="ESTADO">
+    <Key>
+      <PropertyRef Name="ID_ESTADO" />
+    </Key>
+    <Property Name="ID_ESTADO" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="NOMBRE_ESTADO" Type="varchar2" MaxLength="20" Nullable="false" />
+    <Property Name="ID_PADRE" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="FECHA_CREACION" Type="timestamp" Precision="6" />
+    <Property Name="FECHA_MODIFICACION" Type="timestamp" Precision="6" />
+  </EntityType>
+  <EntityType Name="FACTURA">
+    <Key>
+      <PropertyRef Name="ID_FACTURA" />
+    </Key>
+    <Property Name="ID_FACTURA" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="ID_CLIENTE_FK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="NIT_CLIENTE" Type="varchar2" MaxLength="30" Nullable="false" />
+    <Property Name="TOTAL_FACUTRA" Type="float" Precision="126" Scale="0" Nullable="false" />
+    <Property Name="FECHA_CREACION" Type="timestamp" Precision="6" />
+    <Property Name="FECHA_MODIFICACION" Type="timestamp" Precision="6" />
+  </EntityType>
+  <EntityType Name="PRODUCTO">
+    <Key>
+      <PropertyRef Name="ID_PRODUCTO" />
+    </Key>
+    <Property Name="ID_PRODUCTO" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="ID_CATEGORIA_FK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="ID_ESTADO_FK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="NOMBRE_PRODUCTO" Type="varchar2" MaxLength="30" Nullable="false" />
+    <Property Name="PRECIO_PROMEDIO" Type="float" Precision="126" Scale="0" Nullable="false" />
+    <Property Name="DESCRIPCION_PRODUCTO" Type="varchar2" MaxLength="100" />
+    <Property Name="STOCK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="FECHA_CREACION" Type="timestamp" Precision="6" />
+    <Property Name="FECHA_MODIFICACION" Type="timestamp" Precision="6" />
+  </EntityType>
+  <EntityType Name="PUNTO_ACUMULADO">
+    <Key>
+      <PropertyRef Name="ID_PUNTOS" />
+    </Key>
+    <Property Name="ID_PUNTOS" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="ID_CLIENTE_FK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="ID_FACTURA_FK" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="PUNTO_CANJEAR" Type="number" Precision="38" Scale="0" Nullable="false" />
+    <Property Name="FECHA_CREACION" Type="timestamp" Precision="6" />
+    <Property Name="FECHA_MODIFICACION" Type="timestamp" Precision="6" />
+  </EntityType>
+  <Association Name="SYS_C007563">
+    <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+    <End Role="CLIENTE" Type="Self.CLIENTE" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ESTADO">
+        <PropertyRef Name="ID_ESTADO" />
+      </Principal>
+      <Dependent Role="CLIENTE">
+        <PropertyRef Name="ID_ESTADO_FK" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="SYS_C007571">
+    <End Role="CATEGORIA" Type="Self.CATEGORIA" Multiplicity="1" />
+    <End Role="PRODUCTO" Type="Self.PRODUCTO" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CATEGORIA">
+        <PropertyRef Name="ID_CATEGORIA" />
+      </Principal>
+      <Dependent Role="PRODUCTO">
+        <PropertyRef Name="ID_CATEGORIA_FK" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="SYS_C007572">
+    <End Role="ESTADO" Type="Self.ESTADO" Multiplicity="1" />
+    <End Role="PRODUCTO" Type="Self.PRODUCTO" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="ESTADO">
+        <PropertyRef Name="ID_ESTADO" />
+      </Principal>
+      <Dependent Role="PRODUCTO">
+        <PropertyRef Name="ID_ESTADO_FK" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="SYS_C007578">
+    <End Role="CLIENTE" Type="Self.CLIENTE" Multiplicity="1" />
+    <End Role="FACTURA" Type="Self.FACTURA" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CLIENTE">
+        <PropertyRef Name="ID_CLIENTE" />
+      </Principal>
+      <Dependent Role="FACTURA">
+        <PropertyRef Name="ID_CLIENTE_FK" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="SYS_C007586">
+    <End Role="FACTURA" Type="Self.FACTURA" Multiplicity="1" />
+    <End Role="DETALLE_FACTURA" Type="Self.DETALLE_FACTURA" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="FACTURA">
+        <PropertyRef Name="ID_FACTURA" />
+      </Principal>
+      <Dependent Role="DETALLE_FACTURA">
+        <PropertyRef Name="ID_FACTURA_FK" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="SYS_C007587">
+    <End Role="PRODUCTO" Type="Self.PRODUCTO" Multiplicity="1" />
+    <End Role="DETALLE_FACTURA" Type="Self.DETALLE_FACTURA" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PRODUCTO">
+        <PropertyRef Name="ID_PRODUCTO" />
+      </Principal>
+      <Dependent Role="DETALLE_FACTURA">
+        <PropertyRef Name="ID_PRODUCTO_FK" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="SYS_C007593">
+    <End Role="CLIENTE" Type="Self.CLIENTE" Multiplicity="1" />
+    <End Role="PUNTO_ACUMULADO" Type="Self.PUNTO_ACUMULADO" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="CLIENTE">
+        <PropertyRef Name="ID_CLIENTE" />
+      </Principal>
+      <Dependent Role="PUNTO_ACUMULADO">
+        <PropertyRef Name="ID_CLIENTE_FK" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="SYS_C007594">
+    <End Role="FACTURA" Type="Self.FACTURA" Multiplicity="1" />
+    <End Role="PUNTO_ACUMULADO" Type="Self.PUNTO_ACUMULADO" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="FACTURA">
+        <PropertyRef Name="ID_FACTURA" />
+      </Principal>
+      <Dependent Role="PUNTO_ACUMULADO">
+        <PropertyRef Name="ID_FACTURA_FK" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Model_BD_Electronicos_SAStoreContainer">
+    <EntitySet Name="CATEGORIA" EntityType="Self.CATEGORIA" Schema="HECTOR" store:Type="Tables" />
+    <EntitySet Name="CLIENTE" EntityType="Self.CLIENTE" Schema="HECTOR" store:Type="Tables" />
+    <EntitySet Name="DETALLE_FACTURA" EntityType="Self.DETALLE_FACTURA" Schema="HECTOR" store:Type="Tables" />
+    <EntitySet Name="ESTADO" EntityType="Self.ESTADO" Schema="HECTOR" store:Type="Tables" />
+    <EntitySet Name="FACTURA" EntityType="Self.FACTURA" Schema="HECTOR" store:Type="Tables" />
+    <EntitySet Name="PRODUCTO" EntityType="Self.PRODUCTO" Schema="HECTOR" store:Type="Tables" />
+    <EntitySet Name="PUNTO_ACUMULADO" EntityType="Self.PUNTO_ACUMULADO" Schema="HECTOR" store:Type="Tables" />
+    <AssociationSet Name="SYS_C007563" Association="Self.SYS_C007563">
+      <End Role="ESTADO" EntitySet="ESTADO" />
+      <End Role="CLIENTE" EntitySet="CLIENTE" />
+    </AssociationSet>
+    <AssociationSet Name="SYS_C007571" Association="Self.SYS_C007571">
+      <End Role="CATEGORIA" EntitySet="CATEGORIA" />
+      <End Role="PRODUCTO" EntitySet="PRODUCTO" />
+    </AssociationSet>
+    <AssociationSet Name="SYS_C007572" Association="Self.SYS_C007572">
+      <End Role="ESTADO" EntitySet="ESTADO" />
+      <End Role="PRODUCTO" EntitySet="PRODUCTO" />
+    </AssociationSet>
+    <AssociationSet Name="SYS_C007578" Association="Self.SYS_C007578">
+      <End Role="CLIENTE" EntitySet="CLIENTE" />
+      <End Role="FACTURA" EntitySet="FACTURA" />
+    </AssociationSet>
+    <AssociationSet Name="SYS_C007586" Association="Self.SYS_C007586">
+      <End Role="FACTURA" EntitySet="FACTURA" />
+      <End Role="DETALLE_FACTURA" EntitySet="DETALLE_FACTURA" />
+    </AssociationSet>
+    <AssociationSet Name="SYS_C007587" Association="Self.SYS_C007587">
+      <End Role="PRODUCTO" EntitySet="PRODUCTO" />
+      <End Role="DETALLE_FACTURA" EntitySet="DETALLE_FACTURA" />
+    </AssociationSet>
+    <AssociationSet Name="SYS_C007593" Association="Self.SYS_C007593">
+      <End Role="CLIENTE" EntitySet="CLIENTE" />
+      <End Role="PUNTO_ACUMULADO" EntitySet="PUNTO_ACUMULADO" />
+    </AssociationSet>
+    <AssociationSet Name="SYS_C007594" Association="Self.SYS_C007594">
+      <End Role="FACTURA" EntitySet="FACTURA" />
+      <End Role="PUNTO_ACUMULADO" EntitySet="PUNTO_ACUMULADO" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

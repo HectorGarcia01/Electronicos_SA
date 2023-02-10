@@ -1,0 +1,171 @@
+﻿@{
+    ViewBag.Title = "Facturacion";
+}
+<div class="container">
+    <div class="row mt-3">
+        <div class="col">
+            <h2 class="d-flex justify-content-center mb-3">Realizar Compra</h2>
+            <form id="procesar-pago" action="#" method="post">
+                <div id="carrito" class="form-group table-responsive" >
+                    <table class="table" id="lista-compra" >
+                        <thead>
+                            <tr>
+                                <th scope="col">Imagen</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Sub Total</th>
+                                <th scope="col">Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                        <tr>
+                            <th colspan="4" scope="col" class="text-right">SUB TOTAL :</th>
+                            <th scope="col">
+                                <p id="subtotal"></p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" scope="col" class="text-right">IVA :</th>
+                            <th scope="col">
+                                <p id="IVA"></p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" scope="col" class="text-right">DESCUENTO :</th>
+                            <th scope="col">
+                                <p id="Descuento"></p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" scope="col" class="text-right">TOTAL :</th>
+                            <th scope="col">
+                                <p id="total"></p>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="4" scope="col" class="text-right">TOTAL PUNTOS:</th>
+                            <th scope="col">
+                                <p id="puntoTotal"></p>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="row justify-content-between">
+                    <div class="col-md-4 mb-2">
+                        <a href="../TiendaElectronicosSA/Productos" class="btn btn-info btn-block">Seguir comprando</a>
+                    </div>
+                    <div class="col-xs-12 col-md-4">
+                        <button type="button" class="btn btn-success btn-block" id="procesar-compra">Realizar compra</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="../Scripts/TiendaElectronicosSA/facturacion.js" type="module"></script>
+<script type="module">
+    import { obtenerProductosLocalStorage, vaciarLocalStorage } from '../Scripts/TiendaElectronicosSA/carrito.js';
+    import { obtenerClienteAuxLocalStorage} from '../Scripts/TiendaElectronicosSA/facturacion.js';
+
+    const btnProcesarCompra = document.getElementById('procesar-compra');
+
+    btnProcesarCompra.addEventListener('click', procesarCompra);
+
+    function procesarCompra() {
+        if (obtenerProductosLocalStorage().length === 0) {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: 'No hay productos, selecciona alguno',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(function () {
+                window.location = "../TiendaElectronicosSA/Productos";
+            })
+        }
+        else if (obtenerClienteAuxLocalStorage().length === 0) {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Tienes que iniciar sesión para poder comprar',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(function () {
+                window.location = "../TiendaElectronicosSA/Iniciar_Sesion";
+            })
+        }
+        else {
+            NuevaFactura();
+            //PuntosCliente();
+
+           Swal.fire({
+                type: 'success',
+                title: 'Excelente',
+                text: 'Tu compra ha sido procesada',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(function (){
+                vaciarLocalStorage();
+                window.location = "../TiendaElectronicosSA/Index";
+            })
+        }
+    }
+
+    function NuevaFactura() {
+        let productosLS, clienteLS;
+        var nuevaFactura = {};
+        var nuevoDetalleAux = {};
+        var nuevoDetalle = [];
+
+        productosLS = obtenerProductosLocalStorage();
+        clienteLS = obtenerClienteAuxLocalStorage();
+
+        var totalFactura = document.getElementById('total').textContent;
+        let puntos = document.getElementById('puntoTotal').textContent;
+
+        totalFactura = Number(totalFactura.replace("Q. ", ""));
+        
+        productosLS.forEach(function(producto){
+            nuevoDetalleAux = {
+                FKProducto: producto.id,
+                cantidadCompra: producto.cantidad,
+                precioProducto: producto.precio,
+                totalCompra: (producto.cantidad * producto.precio).toFixed(2)
+            }
+            nuevoDetalle.push(nuevoDetalleAux);
+        });
+
+        clienteLS.forEach(function(cliente){
+            nuevaFactura = {
+                FKCliente: cliente.id,
+                nitCliente: cliente.nit,
+                totalFactura: totalFactura,
+                detalleFactura: nuevoDetalle,
+                puntoAcumuladoAux: puntos
+            }
+        });
+
+        console.log(nuevaFactura);
+
+        $.ajax({
+            url: '@Url.Action("NuevaFactura", "TiendaElectronicosSA")',
+            type: 'POST',
+            data: {
+                objFactura: nuevaFactura
+            },
+            success: function (resultado) {
+                if (resultado.result == true) {
+                    console.log("datos agregados a la factura");
+                }
+            },
+            error: function (error) {
+                console.log('Se encontró el siguiente error --> ' + error.state + ' : ' + error.statusText);
+            }
+        });
+    }
+</script>

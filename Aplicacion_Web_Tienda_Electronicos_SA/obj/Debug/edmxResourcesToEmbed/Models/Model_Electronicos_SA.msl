@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="ModelStoreContainer" CdmEntityContainer="Entities_BD_Electronicos_SA">
+    <EntitySetMapping Name="CATEGORIA">
+      <EntityTypeMapping TypeName="Model.CATEGORIA">
+        <MappingFragment StoreEntitySet="CATEGORIA">
+          <ScalarProperty Name="ID_CATEGORIA" ColumnName="ID_CATEGORIA" />
+          <ScalarProperty Name="NOMBRE_CATEGORIA" ColumnName="NOMBRE_CATEGORIA" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CLIENTE">
+      <EntityTypeMapping TypeName="Model.CLIENTE">
+        <MappingFragment StoreEntitySet="CLIENTE">
+          <ScalarProperty Name="ID_CLIENTE" ColumnName="ID_CLIENTE" />
+          <ScalarProperty Name="NOMBRE_CLIENTE" ColumnName="NOMBRE_CLIENTE" />
+          <ScalarProperty Name="APELLIDO_CLIENTE" ColumnName="APELLIDO_CLIENTE" />
+          <ScalarProperty Name="F_NACIMIENTO_CLIENTE" ColumnName="F_NACIMIENTO_CLIENTE" />
+          <ScalarProperty Name="SEXO_CLIENTE" ColumnName="SEXO_CLIENTE" />
+          <ScalarProperty Name="NIT_CLIENTE" ColumnName="NIT_CLIENTE" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CONTACTO_CLIENTE">
+      <EntityTypeMapping TypeName="Model.CONTACTO_CLIENTE">
+        <MappingFragment StoreEntitySet="CONTACTO_CLIENTE">
+          <ScalarProperty Name="ID_CONTACTO_CLIENTE" ColumnName="ID_CONTACTO_CLIENTE" />
+          <ScalarProperty Name="ID_CLIENTE_FK" ColumnName="ID_CLIENTE_FK" />
+          <ScalarProperty Name="TELEFONO_CLIENTE" ColumnName="TELEFONO_CLIENTE" />
+          <ScalarProperty Name="DIRECCION_CLIENTE" ColumnName="DIRECCION_CLIENTE" />
+          <ScalarProperty Name="CORREO_CLIENTE" ColumnName="CORREO_CLIENTE" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="DETALLE_FACTURA">
+      <EntityTypeMapping TypeName="Model.DETALLE_FACTURA">
+        <MappingFragment StoreEntitySet="DETALLE_FACTURA">
+          <ScalarProperty Name="ID_DETALLE_FACTURA" ColumnName="ID_DETALLE_FACTURA" />
+          <ScalarProperty Name="ID_FACTURA_FK" ColumnName="ID_FACTURA_FK" />
+          <ScalarProperty Name="ID_PRODUCTO_FK" ColumnName="ID_PRODUCTO_FK" />
+          <ScalarProperty Name="CANTIDAD_COMPRA" ColumnName="CANTIDAD_COMPRA" />
+          <ScalarProperty Name="TOTAL_COMPRA" ColumnName="TOTAL_COMPRA" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ESTADO">
+      <EntityTypeMapping TypeName="Model.ESTADO">
+        <MappingFragment StoreEntitySet="ESTADO">
+          <ScalarProperty Name="ID_ESTADO" ColumnName="ID_ESTADO" />
+          <ScalarProperty Name="ID_CLIENTE_FK" ColumnName="ID_CLIENTE_FK" />
+          <ScalarProperty Name="ESTADO_CLIENTE" ColumnName="ESTADO_CLIENTE" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FACTURA">
+      <EntityTypeMapping TypeName="Model.FACTURA">
+        <MappingFragment StoreEntitySet="FACTURA">
+          <ScalarProperty Name="ID_FACTURA" ColumnName="ID_FACTURA" />
+          <ScalarProperty Name="ID_CLIENTE_FK" ColumnName="ID_CLIENTE_FK" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PRODUCTO">
+      <EntityTypeMapping TypeName="Model.PRODUCTO">
+        <MappingFragment StoreEntitySet="PRODUCTO">
+          <ScalarProperty Name="ID_PRODUCTO" ColumnName="ID_PRODUCTO" />
+          <ScalarProperty Name="ID_CATEGORIA_FK" ColumnName="ID_CATEGORIA_FK" />
+          <ScalarProperty Name="ID_CLIENTE_FK" ColumnName="ID_CLIENTE_FK" />
+          <ScalarProperty Name="NOMBRE_PRODUCTO" ColumnName="NOMBRE_PRODUCTO" />
+          <ScalarProperty Name="PRECIO_PRODUCTO" ColumnName="PRECIO_PRODUCTO" />
+          <ScalarProperty Name="DESCRIPCION_PRODUCTO" ColumnName="DESCRIPCION_PRODUCTO" />
+          <ScalarProperty Name="CANTIDAD_PRODUCTO" ColumnName="CANTIDAD_PRODUCTO" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PUNTO_ACUMULADO">
+      <EntityTypeMapping TypeName="Model.PUNTO_ACUMULADO">
+        <MappingFragment StoreEntitySet="PUNTO_ACUMULADO">
+          <ScalarProperty Name="ID_PUNTOS" ColumnName="ID_PUNTOS" />
+          <ScalarProperty Name="ID_CLIENTE_FK" ColumnName="ID_CLIENTE_FK" />
+          <ScalarProperty Name="ID_DETALLE_FACTURA_FK" ColumnName="ID_DETALLE_FACTURA_FK" />
+          <ScalarProperty Name="PUNTO_CANJEAR" ColumnName="PUNTO_CANJEAR" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="USUARIO">
+      <EntityTypeMapping TypeName="Model.USUARIO">
+        <MappingFragment StoreEntitySet="USUARIO">
+          <ScalarProperty Name="ID_USUARIO" ColumnName="ID_USUARIO" />
+          <ScalarProperty Name="ID_CLIENTE_FK" ColumnName="ID_CLIENTE_FK" />
+          <ScalarProperty Name="ID_ESTADO_FK" ColumnName="ID_ESTADO_FK" />
+          <ScalarProperty Name="USUARIO1" ColumnName="USUARIO" />
+          <ScalarProperty Name="PASSWORD_U" ColumnName="PASSWORD_U" />
+          <ScalarProperty Name="FECHA_CREACION" ColumnName="FECHA_CREACION" />
+          <ScalarProperty Name="FECHA_MODIFICACION" ColumnName="FECHA_MODIFICACION" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

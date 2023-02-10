@@ -1,0 +1,465 @@
+﻿
+@{
+    ViewBag.Title = "Cuenta";
+}
+
+<div id="contenedor_login">
+    <h2>Iniciar Sesión</h2>
+
+    <form id="login" action="#">
+        <div class="form-group row">
+            <label for="email" class="col-12 col-md-2 col-form-label h2">Correo :</label>
+            <div class="col-12 col-md-10">
+                <input type="text" class="form-control" id="correoLogin" placeholder="Ingresa tu correo">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="contraseña" class="col-12 col-md-2 col-form-label h2">Contraseña :</label>
+            <div class="col-12 col-md-10">
+                <input type="password" class="form-control" id="contraseñaLogin" placeholder="Ingresa tu contraseña">
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="ValidarLoginCliente();">Iniciar Sesión</button>
+        <a href="../TiendaElectronicosSA/Registrar_Cliente" class="btn btn-primary">Registrarse</a>
+    </form>
+</div>
+
+<div id="contenedor_cliente">
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <h2 id="nombreClienteLog"></h2>
+        <button type="button" class="btn btn-primary" id="btnInfoEdit">Editar tu información</button>
+        <button type="button" class="btn btn-success">Historial de Órdenes</button>
+        <button type="button" class="btn btn-success" id="btnVerPunto">Puntos Acumulados</button>
+        <button type="button" class="btn btn-danger" id="btnsalir">Cerrar Sesión</button>
+    </div>
+</div>
+
+<div id="contenedor_informacion">
+    <form id="editar_info" action="#"></form>
+</div>
+
+<div id="historial_ordenes">
+    <table class="table" id="historial">
+    </table>
+</div>
+
+<div id="contenedor_puntos" class="table-responsive">
+    <center><h3>Puntos Acumulados</h3></center>
+    <table class="table" id="puntos_acumulados_cliente">
+        <thead class="table-primary">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+        <tr>
+            <th colspan="3" scope="col" class="text-right">PUNTOS TOTALES :</th>
+            <th scope="col" width="300px">
+                <p id="total_puntos_cliente"></p>
+            </th>
+        </tr>
+        <tr>
+            <th colspan="3" scope="col" class="text-right">PUNTOS CANJEABLES :</th>
+            <th scope="col">
+                <div id="ptsCanjeables"></div>
+            </th>
+        </tr>
+        <tr>
+            <th colspan="2" scope="col" class="text-right">
+                <button type="button" class="btn btn-danger" id="btnRegreso" onclick="AtrasPuntos();">Regresar</button>
+            </th>
+            <th colspan="3" scope="col" class="text-left">
+                <button type="button" class="btn btn-success" id="btnCanjearPuntos" onclick="canjendoPuntos();">Canjear</button>
+            </th>
+        </tr>
+    </table>
+</div>
+
+<script>
+    const formulario_info = document.getElementById("editar_info");
+    const botonEditar = document.getElementById("btnInfoEdit");
+    const botonPuntos = document.getElementById("btnVerPunto");
+    const botonCerrarSesion = document.getElementById("btnsalir");
+
+    document.addEventListener('DOMContentLoaded', leerLocalStorageCliente());
+    botonEditar.addEventListener("click", insertarInfoCliente);
+    botonPuntos.addEventListener("click", ObtenerPuntosAcumulados);
+    botonCerrarSesion.addEventListener("click", CerrarSesion);
+
+    function ValidarLoginCliente(){
+        var credenciales = {
+            correoLoginCliente: $('#correoLogin').val(),
+            passwordLoginCliente: $('#contraseñaLogin').val()
+        }
+    
+        if (credenciales.correoLoginCliente === '' || credenciales.passwordLoginCliente === '') {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Ingrese todos los campos requeridos',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        }
+        else{
+            $.ajax({
+                url: '@Url.Action("ValidarLogin", "TiendaElectronicosSA")',
+                type: 'POST',
+                data: {
+                    objLogin: credenciales
+                },
+                success: function (resultado) {
+                    if (resultado.result == false) {
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Lo siento...',
+                            text: 'Las credenciales son inválidas',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    }
+                    else if(resultado.result == true){
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Felicidades',
+                            text: 'Has iniciado sesión con éxito',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                        setTimeout(MostrarPerfil, 500);
+                        Inicio_Sesion_Activo(credenciales.correoLoginCliente);
+                    }
+                    document.getElementById("login").reset();
+                },
+                error: function (error) {
+                    console.log('Se encontró el siguiente error --> ' + error.state + ' : ' + error.statusText);
+                }
+            });   
+        }
+    }
+
+    function Inicio_Sesion_Activo(correo){
+        fetch('@Url.Action("ObtenerDatosCliente", "TiendaElectronicosSA")')
+            .then(function(cliente){
+                return cliente.json();
+            })
+            .then(function(datosCliente){
+                for(let i = 0; i < datosCliente.length; i++){
+                    if(datosCliente[i].correoCliente == correo){
+                        document.getElementById("nombreClienteLog").innerHTML = datosCliente[i].nombreCliente +" "+ datosCliente[i].apellidoCliente;
+                        const infoCliente = {
+                            id: datosCliente[i].IDCliente,
+                            nit: datosCliente[i].nitCliente,
+                            nombre: datosCliente[i].nombreCliente,
+                            apellido: datosCliente[i].apellidoCliente,
+                            telefono: datosCliente[i].telefonoCliente,
+                            direccion: datosCliente[i].direccionCliente,
+                            correo: datosCliente[i].correoCliente
+                        }
+                        guardarClienteLocalStorage(infoCliente);                            
+                    }
+                }
+            })
+    }
+
+    //Mostrar la información del cliente
+    function insertarInfoCliente() {
+        let clientesLS;
+        clientesLS = obtenerClientesLocalStorage();
+        
+        clientesLS.forEach(function (cliente) {
+            const div = document.createElement('div');
+            div.setAttribute("id", "contenedor_info_cliente");
+            div.innerHTML = `
+                <div class="form-group">
+                    <label for="nitClienteInput">NIT *</label>
+                    <input type="text" class="form-control" id="nit_cliente" value="${cliente.nit}" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombreClienteInput">Nombre *</label>
+                    <input type="text" class="form-control" id="nombre_cliente" value="${cliente.nombre}" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellidoClienteInput">Apellido *</label>
+                    <input type="text" class="form-control" id="apellido_cliente" value="${cliente.apellido}" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefonoClienteInput">Telefono </label>
+                    <input type="text" class="form-control" id="telefono_cliente" value="${cliente.telefono}">
+                </div>
+                <div class="form-group">
+                    <label for="direccionClienteInput">Dirección *</label>
+                    <input type="text" class="form-control" id="direccion_cliente" value="${cliente.direccion}" required>
+                </div>
+                <button type="button" class="btn btn-success" onclick="MostrarPerfil();">Guardar</button>
+                <button type="button" class="btn btn-primary" onclick="ActualizarDatos(${cliente.id});">Actualizar</button>
+            `;
+            formulario_info.appendChild(div);
+        });
+
+        document.getElementById("contenedor_cliente").className = "d-none";
+        document.getElementById("contenedor_informacion").className = "d-block";
+    }
+
+    function ActualizarDatos(id_cliente){
+        var ActualizarRegistro = {
+            IDCliente: id_cliente,
+            nitCliente: $('#nit_cliente').val(),
+            nombreCliente: $('#nombre_cliente').val(),
+            apellidoCliente: $('#apellido_cliente').val(),
+            telefonoCliente: $('#telefono_cliente').val()
+        }
+
+        $.ajax({
+            url: '@Url.Action("ActualizarCliente", "TiendaElectronicosSA")',
+            type: 'PUT',
+            data: {
+                objCliente: ActualizarRegistro
+            },
+            success: function (resultado) {
+                if (resultado.result == true) {
+                    Swal.fire({
+                        type: 'success',
+                        title: 'Excelente',
+                        text: 'Tus datos han sido actualizados',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(function(){
+                        setTimeout(MostrarPerfil, 2000);
+                        localStorage.removeItem("sesion_cliente");
+                        Inicio_Sesion_Activo(ActualizarRegistro.correoCliente);
+    
+                    })
+                }   
+            },
+            error: function (error) {
+                console.log('Se encontró el siguiente error --> ' + error.state + ' : ' + error.statusText);
+            }
+        });
+    }
+
+    function ObtenerPuntosAcumulados(){
+        fetch('@Url.Action("ObtenerPuntosCliente", "TiendaElectronicosSA")')
+            .then(function(puntos){
+                return puntos.json();
+            })
+            .then(function(datosCliente){
+                const listaPuntos = document.querySelector('#puntos_acumulados_cliente tbody');
+                document.getElementById("contenedor_cliente").className = "d-none";
+                document.getElementById("contenedor_puntos").className = "d-block";
+                
+                let puntoTotal = 0;
+                let clienteLS = obtenerClientesLocalStorage();
+                
+                clienteLS.forEach(function(cliente){
+                    for(let i = 0; i < datosCliente.length; i++){
+                        if(datosCliente[i].FKCliente == cliente.id){
+                            const row = document.createElement('tr');
+
+                            row.innerHTML = `
+                                <td>${datosCliente[i].IDPunto}</td>
+                                <td>${cliente.nombre}</td>
+                                <td>${cliente.apellido}</td>
+                                <td id="puntosIndex">${datosCliente[i].puntosCliente}</td>
+                            `;
+                            listaPuntos.appendChild(row);
+                            
+                            puntoTotal += datosCliente[i].puntosCliente;
+                            document.getElementById("total_puntos_cliente").innerHTML = puntoTotal;
+
+                            var datosPuntos = {
+                                id_punto: datosCliente[i].IDPunto,
+                                id_cliente: datosCliente[i].FKCliente,
+                                id_factura: datosCliente[i].FKFactura,
+                                puntoActual: datosCliente[i].puntosCliente
+                            }
+                            guardarPuntosLocalStorage(datosPuntos);
+                        }
+                    }
+                });
+
+                const divPuntos = document.getElementById("ptsCanjeables");
+                const selectPuntos = document.createElement('select');
+                selectPuntos.className = "form-select";
+                selectPuntos.style.textAlign = "center";
+
+                if(puntoTotal < 3000){
+                    selectPuntos.innerHTML = `
+                        <option hidden selected>Escoje puntos a canjear</option>
+                        <option disabled id="option3000" value="3000">3000 pts = Q. 500</option>
+                        <option disabled id="option4000" value="4000">4000 pts = Q. 750</option>
+                        <option disabled id="option5000" value="5000">5000 pts = Q. 1000</option>
+                    `;
+                    divPuntos.appendChild(selectPuntos);
+                }
+                else if(puntoTotal >= 3000 && puntoTotal < 4000){
+                    selectPuntos.innerHTML = `
+                        <option hidden selected>Escoje puntos a canjear</option>
+                        <option id="option3000" value="3000">3000 pts = Q. 500</option>
+                        <option disabled id="option4000" value="4000">4000 pts = Q. 750</option>
+                        <option disabled id="option5000" value="5000">5000 pts = Q. 1000</option>
+                    `;
+                    divPuntos.appendChild(selectPuntos);
+                }
+                else if(puntoTotal >= 4000 && puntoTotal < 5000){
+                    selectPuntos.innerHTML = `
+                        <option hidden selected>Escoje puntos a canjear</option>
+                        <option id="option3000" value="3000">3000 pts = Q. 500</option>
+                        <option id="option4000" value="4000">4000 pts = Q. 750</option>
+                        <option disabled id="option5000" value="5000">5000 pts = Q. 1000</option>
+                    `;
+                    divPuntos.appendChild(selectPuntos);
+                }
+                else{
+                    selectPuntos.innerHTML = `
+                        <option hidden selected>Escoje puntos a canjear</option>
+                        <option id="option3000" value="3000">3000 pts = Q. 500</option>
+                        <option id="option4000" value="4000">4000 pts = Q. 750</option>
+                        <option id="option5000" value="5000">5000 pts = Q. 1000</option>
+                    `;
+                    divPuntos.appendChild(selectPuntos);
+                }
+                
+            })
+    }
+
+    function canjendoPuntos(){
+        let canjeable = document.getElementById("ptsCanjeables").value;
+
+        if(canjeable == "Escoje puntos a canjear"){
+            Swal.fire({
+                type: 'error',
+                title: 'Lo siento',
+                text: 'No puedes canjear ese valor',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        }
+        else{
+            canjeable = Number(canjeable);
+            if(canjeable < 3000){
+                
+            }
+            else if(canjeable == 3000){
+                Swal.fire({
+                    type: 'success',
+                    title: '¡Muy bien!',
+                    text: 'Has canjeado Q.500. Tu código de descuento es: Electronicos3000Descuento',
+                    showConfirmButton: true
+                })
+            }
+        }
+    }
+
+    function AtrasPuntos(){
+        window.location = "../TiendaElectronicosSA/Iniciar_Sesion";
+        localStorage.removeItem("puntos");
+    }
+
+    function MostrarPerfil(){
+        window.location = "../TiendaElectronicosSA/Iniciar_Sesion";
+        clienteInfo = document.getElementById("contenedor_info_cliente");
+        clienteInfo.remove();
+    }
+
+    function CerrarSesion(){
+        localStorage.removeItem("sesion_cliente");
+        window.location = "../TiendaElectronicosSA/Iniciar_Sesion";
+    }
+
+    //////////////////////////////////Funciones para el local storage//////////////////////////////////////
+    /////////////////////////Local Storage para Cliente/////////////////////////
+    //Almacenar en el Local Storage
+    function guardarClienteLocalStorage(cliente) {
+        let sesion_cliente;
+
+        //Tomando un valor de un arreglo con datos del Local Storage
+        sesion_cliente = obtenerClientesLocalStorage();
+
+        //Agregando el cliente
+        sesion_cliente.push(cliente);
+
+        //Agregando al Local Storage
+        localStorage.setItem('sesion_cliente', JSON.stringify(sesion_cliente));
+    }
+
+    //Comprobando que existen elementos en el Local Storage
+    function obtenerClientesLocalStorage() {
+        let clienteLS;
+
+        //Comprobar si hay algo en Local Storage
+        if (localStorage.getItem('sesion_cliente') === null) {
+            clienteLS = [];
+        }
+        else {
+            clienteLS = JSON.parse(localStorage.getItem('sesion_cliente')); 
+        }
+        return clienteLS;
+    }
+
+    function leerLocalStorageCliente(){
+        if (obtenerClientesLocalStorage().length === 0) {
+            document.getElementById("contenedor_login").className = "d-block";
+            document.getElementById("contenedor_cliente").className = "d-none";
+            document.getElementById("contenedor_informacion").className = "d-none";
+            document.getElementById("historial_ordenes").className = "d-none";
+            document.getElementById("contenedor_puntos").className = "d-none";
+        }
+        else{
+            document.getElementById("contenedor_login").className = "d-none";
+            document.getElementById("contenedor_cliente").className = "d-block";
+            document.getElementById("contenedor_informacion").className = "d-none";
+            document.getElementById("historial_ordenes").className = "d-none";
+            document.getElementById("contenedor_puntos").className = "d-none";
+
+            let clienteLS = obtenerClientesLocalStorage();
+            clienteLS.forEach(function (cliente) {
+                document.getElementById("nombreClienteLog").innerHTML = cliente.nombre +" "+ cliente.apellido;
+            });
+        }
+    }
+
+    /////////////////////////Local Storage para puntos/////////////////////////
+    //Almacenar en el Local Storage
+    function guardarPuntosLocalStorage(datosPuntos) {
+        let puntos;
+
+        //Tomando un valor de un arreglo con datos del Local Storage
+        puntos = obtenerPuntosLocalStorage();
+
+        //Agregando el cliente
+        puntos.push(datosPuntos);
+
+        //Agregando al Local Storage
+        localStorage.setItem('puntos', JSON.stringify(puntos));
+    }
+
+    //Comprobando que existen elementos en el Local Storage
+    function obtenerPuntosLocalStorage() {
+        let puntoLS;
+
+        //Comprobar si hay algo en Local Storage
+        if (localStorage.getItem('puntos') === null) {
+            puntoLS = [];
+        }
+        else {
+            puntoLS = JSON.parse(localStorage.getItem('puntos')); 
+        }
+        return puntoLS;
+    }
+
+</script>
+
+<style>
+    #contenedor_informacion {
+        margin-top: 25px;
+        margin-left: 200px;
+        width: 600px;
+    }
+</style>

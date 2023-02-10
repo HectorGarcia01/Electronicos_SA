@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "Registrar Clientes";
+}
+
+<form id="Formulario_Cliente">    
+    <div class="form-group">
+        <label for="nitClienteInput">NIT *</label>
+        <input type="text" class="form-control" id="nit_cliente" placeholder="NIT" required>
+    </div>
+    <div class="agrupados">
+        <div class="form-group">
+            <label for="nombreClienteInput">Nombre *</label>
+            <input type="text" class="form-control" id="nombre_cliente" placeholder="NOMBRE" required>
+        </div>
+        <div class="form-group inputIzquierda">
+            <label for="apellidoClienteInput">Apellido *</label>
+            <input type="text" class="form-control" id="apellido_cliente" placeholder="APELLIDO" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="sexoClienteInput">Sexo</label>
+        <input type="text" class="form-control" id="sexo_cliente" placeholder="SEXO">
+    </div>
+    <div class="form-group">
+        <label for="telefonoClienteInput">Teléfono</label>
+        <input type="text" class="form-control" id="telefono_cliente" placeholder="TELEFONO">
+    </div>
+    <div class="form-group">
+        <label for="direccionClienteInput">Dirección *</label>
+        <input type="text" class="form-control" id="direccion_cliente" placeholder="DIRECCION" required>
+    </div>
+    <div class="agrupados">
+        <div class="form-group">
+            <label for="correoClienteInput">Correo *</label>
+            <input type="email" class="form-control" id="correo_cliente" placeholder="CORREO" required>
+        </div>
+        <div class="form-group inputIzquierda">
+            <label for="passwordClienteInput">Contraseña *</label>
+            <input type="password" class="form-control" id="password_cliente" placeholder="CONTRASEÑA" required>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary" onclick="crearNuevoRegistro();">Registrar</button>
+</form>
+
+<style>
+    #Formulario_Cliente {
+        margin-top: 25px;
+        margin-left: 200px;
+        width: 600px;
+    }
+
+    .agrupados {
+        display: flex;
+    }
+
+    .inputIzquierda {
+        margin-left: 100px;
+    }
+
+    #Formulario_Cliente input {
+        width: 300px;
+    }
+</style>
+
+
+<script>
+    function crearNuevoRegistro() {
+        var nuevoRegistro = {
+            nitCliente: $('#nit_cliente').val(),
+            nombreCliente: $('#nombre_cliente').val(),
+            apellidoCliente: $('#apellido_cliente').val(),
+            sexoCliente: $('#sexo_cliente').val(),
+            telefonoCliente: $('#telefono_cliente').val(),
+            direccionCliente: $('#direccion_cliente').val(),
+            correoCliente: $('#correo_cliente').val(),
+            passwordCliente: $('#password_cliente').val()
+        }
+        
+        if(nuevoRegistro.nitCliente == "" || nuevoRegistro.nombreCliente == "" || nuevoRegistro.apellidoCliente == "" || nuevoRegistro.direccionCliente == "" || nuevoRegistro.correoCliente == "" || nuevoRegistro.passwordCliente == ""){
+            Swal.fire({
+                type: 'error',
+                title: 'Lo siento...',
+                text: 'Tienes que llenar los campos obligatorios',
+                showConfirmButton: false,
+                timer: 2000
+            })
+        }
+        else{
+            $.ajax({
+                url: '@Url.Action("NuevoCliente", "TiendaElectronicosSA")',
+                type: 'POST',
+                data: {
+                    objCliente: nuevoRegistro
+                },
+                success: function (resultado) {
+                    if (resultado.result == true) {
+                        Swal.fire({
+                            type: 'success',
+                            title: 'Excelente',
+                            text: 'Te has registrado correctamente',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    }
+                    else if(resultado.result == "Existe"){
+                        Swal.fire({
+                            type: 'error',
+                            title: 'Lo siento...',
+                            text: 'Ya existe un cliente con esos datos',
+                            showConfirmButton: false,
+                            timer: 2000
+                        })
+                    }
+
+                    document.getElementById("Formulario_Cliente").reset();
+                },
+                error: function (error) {
+                    console.log('Se encontró el siguiente error --> ' + error.state + ' : ' + error.statusText);
+                }
+            });
+        }
+    }
+</script>
